@@ -1,0 +1,53 @@
+[分享] Yabomish — 純 Swift 開源嘸蝦米輸入法 for macOS
+
+各位 Mac 版友好，
+
+在 Mac 上用嘸蝦米，大概就這幾條路：
+
+1. 行易官方版 — 付費授權，更新慢，macOS 大版本升級常常出事
+2. OpenVanilla 掛 CIN — 能打字，但沒有字頻學習、萬用碼殘缺、
+   沒有補碼、沒有同音字查詢，就是一個很陽春的 CIN 載入器
+3. RIME 鼠鬚管 — 要自己寫 YAML 配置，門檻高，也不是為嘸蝦米設計的
+
+每次 macOS 升級都在賭輸入法會不會壞掉，這種日子過夠了，
+所以我用 Swift 從頭寫了一個。
+
+【Yabomish】
+https://github.com/AlohaYos/yabomish
+
+純 Swift，8 個 .swift 檔，swiftc 直接編譯。
+不需要 Xcode 專案、不需要任何第三方框架。
+Apple Silicon native，macOS 14+。
+
+一鍵安裝：
+  git clone https://github.com/AlohaYos/yabomish.git
+  cd yabomish
+  cp /你的/liu.cin .
+  ./setup.sh
+
+裝完到 系統設定 → 鍵盤 → 輸入方式 加入「Yabomish」就能用。
+
+【跟 OpenVanilla 掛 CIN 比，多了什麼】
+
+- 字頻學習（unigram + bigram 前後文排序，越打越準）
+- 萬用碼 * 完整支援（有 prefix 預過濾，不會慢）
+- 補碼 v 快選第二候選字
+- 同音字查詢（按 ' 觸發，忘記碼的時候救命用）
+- 注音反查（/zh 切換，用注音查嘸蝦米碼）
+- 中文標點直出（, → ，、[] → 「」、{} → 『』）
+- 逗號開頭編碼完整支援（,z → 方向鍵等 1737 筆）
+- 硬體 keyCode 對應，Dvorak / Colemak / AZERTY 都能用
+- 選字窗兩種模式：游標跟隨 / 螢幕底部固定
+- 安全輸入偵測（密碼欄位自動停用）
+- GUI 偏好設定視窗
+
+【不需要】
+
+Xcode 專案、CocoaPods、SPM、任何第三方依賴。
+也不需要付費授權。MIT 開源，隨便用。
+
+需要自備嘸蝦米 CIN 字表（liu.cin），本專案不含字表。
+
+歡迎回報 bug 或許願功能。
+
+--
