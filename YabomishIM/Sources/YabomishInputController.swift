@@ -415,7 +415,11 @@ class YabomishInputController: IMKInputController {
 
         if currentCandidates.isEmpty && composing.count >= kMaxCodeLength && !isWildcard {
             NSSound.beep()
+            let typed = composing
             resetComposing(client: client)
+            client.insertText(typed, replacementRange: NSRange(location: NSNotFound, length: NSNotFound))
+            isEnglishMode = true
+            showModeToast("A")
             return true
         }
 
