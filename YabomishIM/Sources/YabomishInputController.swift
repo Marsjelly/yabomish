@@ -131,6 +131,7 @@ class YabomishInputController: IMKInputController {
         DebugLog.log("key=\(keyCode) chars=\(event.characters ?? "") composing=\(composing) candidates=\(currentCandidates.count) zhuyin=\(isZhuyinMode) sameSound=\(isSameSoundMode)")
 
         if flags.contains(.command) || flags.contains(.control) || flags.contains(.option) {
+            if flags.contains(.shift) { shiftWasUsedWithOtherKey = true }
             return false
         }
 
@@ -320,10 +321,17 @@ class YabomishInputController: IMKInputController {
     // MARK: - Shift Toggle
 
     private func handleFlagsChanged(_ event: NSEvent) -> Bool {
-        let shiftDown = event.modifierFlags.contains(.shift)
+        let flags = event.modifierFlags
+        let shiftDown = flags.contains(.shift)
+        // If other modifiers are held with Shift, it's a combo, not a standalone toggle
+        let hasOtherModifiers = flags.contains(.command) || flags.contains(.control) || flags.contains(.option)
         if shiftDown {
-            lastShiftDown = event.timestamp
-            shiftWasUsedWithOtherKey = false
+            if hasOtherModifiers {
+                shiftWasUsedWithOtherKey = true
+            } else if lastShiftDown == 0 {
+                lastShiftDown = event.timestamp
+                shiftWasUsedWithOtherKey = false
+            }
         } else if lastShiftDown > 0 {
             if event.timestamp - lastShiftDown < 0.3 && !shiftWasUsedWithOtherKey {
                 isEnglishMode.toggle()
