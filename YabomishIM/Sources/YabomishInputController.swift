@@ -181,17 +181,9 @@ class YabomishInputController: IMKInputController {
             return handleZhuyinKey(keyCode, client: client)
         }
 
-        // ' (single quote, keyCode 39) → same-sound mode
+        // ' (single quote, keyCode 39) → pending state
+        // Next key decides: space → 頓號, ; → zhuyin toggle, letter → same-sound code input
         if keyCode == 39 && !isSameSoundMode && composing.isEmpty {
-            // Post-commit: just committed a char → show same-sound list directly
-            if justCommitted && !lastCommitted.isEmpty {
-                isSameSoundMode = true
-                sameSoundBase = lastCommitted
-                _ = handleSameSound(client: client)
-                return true
-            }
-            // Idle: enter pending state for '; (zhuyin) detection
-            // If next key is not ';', outputs 、 (頓號) instead
             isSameSoundMode = true
             composing = "'"
             updateMarkedText(client: client)
@@ -239,8 +231,6 @@ class YabomishInputController: IMKInputController {
             if isSameSoundMode && composing == "'" && sameSoundBase.isEmpty {
                 isSameSoundMode = false
                 composing = ""
-                client.setMarkedText("", selectionRange: NSRange(location: 0, length: 0),
-                                     replacementRange: NSRange(location: NSNotFound, length: NSNotFound))
                 commitText("、", client: client)
                 return true
             }
@@ -379,8 +369,6 @@ class YabomishInputController: IMKInputController {
             // Non-letter: output 頓號 then process char normally
             isSameSoundMode = false
             composing = ""
-            client.setMarkedText("", selectionRange: NSRange(location: 0, length: 0),
-                                 replacementRange: NSRange(location: NSNotFound, length: NSNotFound))
             commitText("、", client: client)
             // Fall through to process the char as normal input
         }
