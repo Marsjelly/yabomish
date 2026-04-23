@@ -180,7 +180,12 @@ final class InputEngine {
         _refreshCandidates()
 
         if _currentCandidates.isEmpty && _composing.count >= cinTable.maxCodeLength && !_isWildcard {
-            _resetComposing(); return
+            let typed = _composing
+            _resetComposing()
+            _commitText(typed)
+            _isEnglishMode = true
+            delegate?.engineDidShowToast(_currentModeLabel)
+            return
         }
 
         if prefs.autoCommit &&
