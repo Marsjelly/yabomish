@@ -449,6 +449,7 @@ extension YabomishInputController {
         let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
 
         if flags.contains(.command) || flags.contains(.control) || flags.contains(.option) {
+            if flags.contains(.shift) { newEngineShiftUsed = true }
             return false
         }
 
@@ -645,16 +646,25 @@ extension YabomishInputController {
     }
 
     private func handleNewEngineFlagsChanged(_ event: NSEvent) -> Bool {
-        let shiftDown = event.modifierFlags.contains(.shift)
+        let flags = event.modifierFlags
+        let shiftDown = flags.contains(.shift)
+        let hasOtherModifiers = flags.contains(.command) || flags.contains(.control) || flags.contains(.option)
         if shiftDown {
-            newEngineLastShiftDown = event.timestamp
-            newEngineShiftUsed = false
-        } else if newEngineLastShiftDown > 0 {
-            if event.timestamp - newEngineLastShiftDown < 0.3 && !newEngineShiftUsed {
-                if !engine.composing.isEmpty { engine.handleEscape() }
-                engine.toggleEnglishMode()
+            if hasOtherModifiers {
+                newEngineShiftUsed = true
+            } else if newEngineLastShiftDown == 0 && !newEngineShiftUsed {
+                newEngineLastShiftDown = event.timestamp
+                newEngineShiftUsed = false
+            }
+        } else {
+            if newEngineLastShiftDown > 0 {
+                if event.timestamp - newEngineLastShiftDown < 0.3 && !newEngineShiftUsed {
+                    if !engine.composing.isEmpty { engine.handleEscape() }
+                    engine.toggleEnglishMode()
+                }
             }
             newEngineLastShiftDown = 0
+            newEngineShiftUsed = false
         }
         return false
     }
