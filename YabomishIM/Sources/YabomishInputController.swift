@@ -597,8 +597,8 @@ extension YabomishInputController {
             }
         }
 
-        // Non-CIN punctuation passthrough: - = \ ` ' ; /
-        let passthroughKeyCodes: Set<UInt16> = [27, 24, 42, 50, 39, 41, 44]
+        // Non-CIN punctuation passthrough: - = \ ` ; /
+        let passthroughKeyCodes: Set<UInt16> = [27, 24, 42, 50, 41, 44]
         if passthroughKeyCodes.contains(keyCode) {
             if !engine.composing.isEmpty {
                 if !engine.currentCandidates.isEmpty { engine.handleSpace() }
