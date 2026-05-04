@@ -181,7 +181,7 @@ final class InputEngine {
 
         if _currentCandidates.isEmpty && _composing.count >= cinTable.maxCodeLength && !_isWildcard {
             let typed = _composing
-            _resetComposing()
+            _composing = ""
             _commitText(typed)
             _isEnglishMode = true
             delegate?.engineDidShowToast(_currentModeLabel)
